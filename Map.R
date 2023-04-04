@@ -19,6 +19,7 @@
 library(mapview)
 library(tidyverse)
 library(sf)
+library(webshot)
 
 #Load in csv file of all coordinates
 all <- read.csv("Coordinates_all.csv")
@@ -43,6 +44,7 @@ glimpse(all)
 #Lastly, I mapped all coordinates (from full and city addresses).
 
 ######SPECIFIC SITES######
+mapviewOptions(fgb = FALSE)#specify this for creating the HTML file later on
 
 #Map only coordinates from full addresses
 all %>%
@@ -70,6 +72,17 @@ all %>%
   st_jitter(factor = 0.0005) %>%
   mapview
 
+
+#Create HTML of map with all coordinates
+install_phantomjs()
+
+html <- all %>%
+  st_as_sf(coords = c("Longitude", "Latitude"), crs = 4269) %>% 
+  st_jitter(factor = 0.0005)
+
+m = mapview(html)
+
+mapshot(m, url = "FLBeekeeperMap.html", file=".html")#downloads HTML to directory folder
 
 
 ####DATA CLEANING####
